@@ -1,0 +1,128 @@
+<odoo>
+
+    <record id="paperformat_euro_landscape" model="report.paperformat">
+        <field name="name">European A4 Portrait</field>
+        <field name="default" eval="True" />
+        <field name="format">A4</field>
+        <field name="page_height">0</field>
+        <field name="page_width">0</field>
+        <field name="orientation">Portrait</field>
+        <field name="margin_top">40</field>
+        <field name="margin_bottom">23</field>
+        <field name="margin_left">7</field>
+        <field name="margin_right">7</field>
+        <field name="header_line" eval="False" />
+        <field name="header_spacing">35</field>
+        <field name="dpi">90</field>
+    </record>
+
+    <report id="deliverynote_report"
+            string="Delivery Note"
+            model="delivery.model"
+            report_type="qweb-html"
+            name="sale_custom.report_deliverynote_template"
+            paperformat="paperformat_euro_landscape"
+
+    />
+    <template id="report_deliverynote_template">
+        <t t-call="web.html_container">
+            <t t-call="web.external_layout">
+                <div class="page">
+                    <div class="row">
+                        <div class="col-md-6"/>
+                        <div class="col-md-6 text-right">
+                            <h4 class="text-right" style="font-size:2em;color:#5185f3"><strong>DELIVERY NOTE</strong></h4>
+                            <p style="font-size:2em;color:#5185f3">
+                                <t t-if="docs.date"> DATE : <span t-field="docs.date"></span> </t>
+                                <t t-if="docs.number">RECEIPT NO: <span t-field="docs.number"></span></t>
+                            </p>
+                        </div>
+                    </div>
+                    <div id="informations" class="row mt32 mb32">
+                        <div class="col-md-6 img-thumbnail" style="background-color:#5185f3">
+                            <div class="col-auto mw-100 mb-2" t-if="docs.partner_id.name" name="description" style="background-color:#5185f3">
+                            <strong>To :</strong>
+                            <p class="m-0" t-field="docs.partner_id.name"/>
+                            </div>
+                            <div class="col-auto mw-100 mb-2" t-if="docs.partner_id" name="invoice_date" style="background-color:#5185f3">
+                                <strong>Address:</strong>
+                                <div class="m-0" t-field="docs.partner_id" t-options="{&quot;widget&quot;: &quot;contact&quot;, &quot;fields&quot;: [&quot;address&quot;, &quot;name&quot;], &quot;no_marker&quot;: True}"/>
+                            </div>
+                            <div class="col-auto mw-100 mb-2" style="background-color:#5185f3">
+                                <strong>Date Sent:</strong>
+                                <p class="m-0" t-field="docs.date"/>
+                            </div>
+                            <div class="col-auto mw-100 mb-2" t-if="docs.number" name="origin" style="background-color:#5185f3">
+                                <strong>Invoice Number:</strong>
+                                <p class="m-0" t-field="docs.number"/>
+                            </div>
+                            <div class="col-auto mw-100 mb-2" t-if="docs.user_id" name="customer_code" style="background-color:#5185f3">
+                                <strong>Sales Person:</strong>
+                                <p class="m-0" t-field="docs.user_id"/>
+                                <p class="m-0" t-field="docs.user_id.phone"/>
+                            </div>
+                        </div>
+
+
+                    </div>
+
+                    <div class="row" id="table_row">
+                        <div class="col-md-12">
+                            <div class="row">
+                                <table class="table table-sm o_main_table">
+                                    <t t-set="count" t-value="3"></t>
+                                    <thead class="img-thumbnail" style="background-color:#5185f3">
+                                        <tr >
+                                            <th class="text-left">Name</th>
+                                            <th class="text-left">Quantity</th>
+                                            <th class="text-left">Price</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <t t-foreach="docs.products" t-as="prod">
+                                            <tr class="img-thumbnail" >
+                                                <td><span t-field="prod.name"></span></td>
+                                                <td><span t-field="prod.quantity"></span></td>
+                                                <td><span t-field="prod.price_unit"></span></td>
+                                            </tr>
+                                        </t>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="row">
+                                <p t-if="docs.amount_words" >
+                                    <b>Amount in words : </b><span t-field="docs.amount_words"/>
+                                </p><br></br><br></br><br></br>
+                            </div>
+                            <div class="row">
+                                <table class="table table-sm o_main_table">
+                                    <thead class="img-thumbnail" style="background-color:#5185f3">
+                                        <tr style="background-color:#5185f3">
+                                            <th>Goods received in good order</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                <div class="col-auto mw-100 mb-4">
+                                                    <p>Name : <hr></hr></p>
+                                                </div>
+                                                <div class="col-auto mw-100 mb-4">
+                                                    <p>Signature : <hr></hr></p>
+                                                </div>
+                                                <div class="col-auto mw-100 mb-4">
+                                                    <p>Date : <hr></hr></p>
+                                                </div>
+                                            </td>
+                                        </tr>
+
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </t>
+        </t>
+    </template>
+</odoo>

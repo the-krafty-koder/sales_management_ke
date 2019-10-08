@@ -1,0 +1,156 @@
+<?xml version="1.0" ?>
+<odoo>
+    <record id="paperformat_euro_landscape" model="report.paperformat">
+        <field name="name">European A4 Portrait</field>
+        <field name="default" eval="True" />
+        <field name="format">A4</field>
+        <field name="page_height">0</field>
+        <field name="page_width">0</field>
+        <field name="orientation">Portrait</field>
+        <field name="margin_top">40</field>
+        <field name="margin_bottom">23</field>
+        <field name="margin_left">7</field>
+        <field name="margin_right">7</field>
+        <field name="header_line" eval="False" />
+        <field name="header_spacing">35</field>
+        <field name="dpi">90</field>
+    </record>
+    <report id="receipt_report"
+            string="Receipt"
+            model="receipt.model"
+            report_type="qweb-html"
+            name="sale_custom.report_receipt_template"
+            paperformat="paperformat_euro_landscape"
+
+    />
+    <template id="report_receipt_template">
+
+        <t t-call="web.html_container">
+            <div class="jumbotron">
+                <div class="row " style="height:20px;background-color:#5185f3;margin:-2em;margin-bottom:0.5em;"></div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <img class="media-object" t-att-src="'data:image/png;base64,%s' %  res_company.logo" style="max-height: 24px;" />
+                        <div t-field="res_company.report_header"
+                             t-field-options='{
+                              "widget": "contact",
+                              "fields": ["address", "name", "phone", "fax"],
+                                        "no_marker": true}' />
+                    </div>
+                    <div class="col-md-6 text-right pull-right">
+                            <h5 class="text-right" style="font-size:2em;color:#5185f3"><strong>RECEIPT</strong></h5>
+                    </div>
+                </div>
+            </div>
+        </t>
+        <t t-call="web.html_container">
+                <div class="page" style="background-image:url(../static/src/img/paid.jpeg">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <p>BILL TO :</p>
+                            <hr style="padding-top:-2px;"></hr><br></br>
+                            <div t-field="docs.partner_id" t-options="{'widget': 'contact','fields': ['address', 'name'], 'no_marker': True}"/>
+                        </div>
+                        <div class="col-md-8 pull-right text-right">
+                            <p style="font-size:1em;color:#5185f3;padding-top:1px;">
+                                <t t-if="docs.date"> <b>DATE : </b><span t-field="docs.date"></span></t>
+                            </p>
+                            <p style="font-size:1em;color:#5185f3;padding-top:1px;"><t t-if="docs.number"><b>RECEIPT NO: </b><span t-field="docs.number"></span></t></p>
+                        </div>
+
+                    </div><br></br>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <table class="table table-sm o_main_table">
+                                <thead>
+                                    <tr class="img-thumbnail" style="background-color:#5185f3">
+                                        <!-- TODO: remove in master -->
+                                        <t t-set="colspan" t-value="5"/>
+                                        <th class="text-left">Description</th>
+                                        <th class="text-right">Quantity</th>
+                                        <th class="text-right">Unit Price</th>
+                                        <th class="text-right">Taxes</th>
+                                        <th class="text-right">Amount Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-foreach="docs.products" t-as="prod">
+                                        <tr>
+                                            <t t-if="not prod.display_type">
+                                                <td>
+                                                    <span t-field="prod.name"/>
+                                                </td>
+                                                <td class="text-right">
+                                                    <span t-field="prod.quantity"/>
+                                                </td>
+                                                <td class="text-right">
+                                                    <span t-field="prod.price_unit"/>
+                                                </td>
+                                                <td class="text-right">
+                                                    <span t-field="prod.price_tax"/>
+                                                </td>
+                                                <td class="text-right">
+                                                    <span t-field="prod.price_total" />
+                                                </td>
+                                            </t>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </table>
+                        </div>
+
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4 offset-md-8">
+                            <table class="table table-sm">
+                                <tr class="border-black o_subtotal" style="">
+                                    <td><strong>Subtotal</strong></td>
+                                    <td class="text-right">
+                                        <span t-field="docs.invoice_id.amount_untaxed"/>
+                                    </td>
+                                </tr>
+                                <t t-foreach="docs.invoice_id.amount_by_group" t-as="amount_by_group">
+                                    <tr style="">
+                                        <t t-if="len(docs.invoice_id.tax_line_ids) == 1 and docs.invoice_id.amount_untaxed == amount_by_group[2]">
+                                            <td><span t-esc="amount_by_group[0]"/></td>
+                                            <td class="text-right o_price_total">
+                                                <span t-esc="amount_by_group[3]"/>
+                                            </td>
+                                        </t>
+                                        <t t-else="">
+                                            <td>
+                                                <span t-esc="amount_by_group[0]"/>
+                                                <span>&amp;nbsp;<span>on</span>
+                                                    <t t-esc="amount_by_group[4]"/>
+                                                </span>
+                                            </td>
+                                            <td class="text-right o_price_total">
+                                                <span t-esc="amount_by_group[3]"/>
+                                            </td>
+                                        </t>
+                                    </tr>
+                                </t>
+                                <tr class="border-black o_total">
+                                    <td><strong>Total</strong></td>
+                                    <td class="text-right">
+                                        <span t-field="docs.invoice_id.amount_total"/>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <p t-if="docs.amount_words" >
+                            <b>Amount in words : </b><span t-field="docs.amount_words"/>
+                        </p><br></br>
+                        <p t-if="docs.payment" >
+                            <b>Payment method : </b><span t-field="docs.payment"/>
+                        </p>
+                    </div>
+                </div>
+        </t>
+        <t t-call="web.html_container">
+            <div class="row " style="height:20px;background-color:#5185f3;margin:-2em;"></div>
+        </t>
+    </template>
+</odoo>

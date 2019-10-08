@@ -1,0 +1,18 @@
+<?xml version="1.0" ?>
+<odoo>
+
+    <act_window id="action_receipt_menu" name="Receipts" res_model="receipt.model"></act_window>
+    <record id="view_list_receipts" model="ir.ui.view">
+        <field name="name">Receipts List</field>
+        <field name="model">receipt.model</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="number"/>
+                <field name="partner"/>
+                <field name="products"/>
+                <field name="total"/>
+                <field name="date"/>
+            </tree>
+        </field>
+    </record>
+</odoo>

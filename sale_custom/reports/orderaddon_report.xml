@@ -1,0 +1,90 @@
+<?xml version="1.0" ?>
+<odoo>
+    <template id="order_report_addon" inherit_id="sale.report_saleorder_document">
+        <xpath expr="//div[@t-field='doc.partner_id']" position="replace">
+
+        </xpath>
+        <xpath expr="//div[@class='page']//h2" position="replace">
+            <div class="row">
+                <div class="col-auto mw-100 mb-6" style="background-color:#5185f3">
+                    <h2 style="background-color:#5185f3">
+                        <t t-if="not (env.context.get('proforma', False) or is_pro_forma)">
+                            <span t-if="doc.state not in ['draft','sent']">Order # </span>
+                            <span t-if="doc.state in ['draft','sent']">Quotation # </span>
+                        </t>
+                        <t t-if="env.context.get('proforma', False) or is_pro_forma">
+                            <span>Pro-Forma Invoice # </span>
+                        </t>
+                        <span t-field="doc.name"/>
+                    </h2>
+                    <div class="row " id="informations" style="background-color:#5185f3">
+                        <div t-if="doc.client_order_ref" class="col-auto mw-100 mb-2">
+                            <strong>Your Reference:</strong>
+                            <p class="m-0" t-field="doc.client_order_ref"/>
+                        </div>
+                        <div t-if="doc.confirmation_date and doc.state not in ['draft','sent']" class="col-auto mw-100 mb-2">
+                            <strong>Date Ordered:</strong>
+                            <p class="m-0" t-field="doc.confirmation_date"/>
+                        </div>
+                        <div t-if="doc.date_order and doc.state in ['draft','sent']" class="col-auto mw-100 mb-2">
+                            <strong>Quotation Date:</strong>
+                            <p class="m-0" t-field="doc.date_order"/>
+                        </div>
+                        <div t-if="doc.user_id.name" class="col-auto mw-100 mb-2">
+                            <strong>Salesperson:</strong>
+                            <p class="m-0" t-field="doc.user_id"/>
+                        </div>
+                        <div name="payment_term" t-if="doc.payment_term_id" class="col-auto mw-100 mb-2">
+                            <strong>Payment Terms:</strong>
+                            <p class="m-0" t-field="doc.payment_term_id"/>
+                        </div>
+                        <div t-if="doc.validity_date and doc.state in ['draft', 'sent']" class="col-auto mw-100 mb-2">
+                            <strong>Expiration Date:</strong>
+                            <p class="m-0" t-field="doc.validity_date"/>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-auto mw-100 mb-2"></div>
+                <div class="col-auto mw-100 mb-4 text-center">
+                    <div class="text-center" style="padding-left:3em;" t-field="doc.partner_id" t-options="{&quot;widget&quot;: &quot;contact&quot;, &quot;fields&quot;: [&quot;address&quot;, &quot;name&quot;], &quot;no_marker&quot;: True}"/>
+                </div>
+            </div>
+
+        </xpath>
+        <xpath expr="//div[@class='page']/div[@id='informations']" position="replace">
+            <br></br><br></br>
+        </xpath>
+        <xpath expr="//table[@class='table table-sm o_main_table']//thead//tr" position="replace">
+            <tr style="background-color:#5185f3">
+                <!-- TODO: remove in master -->
+                <t t-set="colspan" t-value="5"/>
+                <th class="text-left"><img style="padding:4px;height:1em;width:1em;" src="/sale_custom/static/src/img/icons/desc.png"/> Description</th>
+                <th class="text-right"><img style="padding-right:4px;height:1em;width:1em;" src="/sale_custom/static/src/img/icons/photo-camera.png"/>    Image</th>
+                <th class="text-right"><img style="padding-right:4px;height:1em;width:1em;" src="/sale_custom/static/src/img/icons/quant.png"/>
+                    Quantity</th>
+                <th class="text-right"><img style="padding-right:4px;height:1em;width:1em;" src="/sale_custom/static/src/img/icons/price-tag(1).png"/>Unit Price</th>
+                <th t-if="display_discount" class="text-centre" groups="sale.group_discount_per_so_line">
+                    <span>Disc.(%)</span>
+                    <!-- TODO: remove in master -->
+                    <t t-set="colspan" t-value="colspan+1"/>
+                </th>
+                <th class="text-right"><img style="padding-right:4px;height:1em;width:1em;" src="/sale_custom/static/src/img/icons/tax.png"/>Taxes</th>
+                <th class="text-right">
+                    <t groups="account.group_show_line_subtotals_tax_excluded"><img style="height:1em;width:1em;" src="/sale_custom/static/src/img/icons/coin.png"/>Amount</t>
+                    <t groups="account.group_show_line_subtotals_tax_included">Total Price</t>
+                </th>
+            </tr>
+        </xpath>
+        <xpath expr="//tbody[@class='sale_tbody']//tr//td[1]" position="after">
+            <td><span class="pull-right text-right"><img class="img-thumbnail" style="padding-right:1em;height:3.5em;width:3.1em" t-if="line.product_image" t-att-src="'data:image/png;base64,%s' % to_text(line.product_image)" /></span></td>
+        </xpath>
+        <xpath expr="//div[@class='clearfix']" position="after">
+            <p t-if="doc.amount_words" >
+                <b>Amount in words : </b><span t-field="doc.amount_words"/>
+            </p><br></br>
+            <p t-if="doc.payment_methods" >
+                <b>Payment method : </b><span t-field="doc.payment_methods"/>
+            </p>
+        </xpath>
+    </template>
+</odoo>

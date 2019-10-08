@@ -1,0 +1,28 @@
+<?xml version="1.0" ?>
+<odoo>
+    <record id="view_delivery" model="ir.ui.view">
+        <field name="name">Delivery Form</field>
+        <field name="model">delivery.model</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="view_deliverynote" type="object" string="View Delivery Note"></button>
+                </header>
+                <group>
+                    <group class="group-left">
+
+                        <field name="invoice_id" context="{'invoice_id': context.get('invoice_passed', False),}"></field>
+                        <field name="partner"></field>
+                        <field name="date"></field>
+                        <field name="amount_words"></field>
+                    </group>
+                    <group class="group-right">
+                        <field name="products"></field>
+                        <field name="total"></field>
+                        <field name="user_id"></field>
+                    </group>
+                </group>
+            </form>
+        </field>
+    </record>
+</odoo>

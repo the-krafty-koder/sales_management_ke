@@ -1,0 +1,16 @@
+<?xml version="1.0"  ?>
+<odoo>
+    <record id="view_sales_addon" model="ir.ui.view">
+		<field name="name">Sales</field>
+		<field name="model">sale.order</field>
+		<field name="inherit_id" ref="sale.view_order_form"/>
+		<field name="arch" type="xml">
+            <field name="payment_term_id" position="after">
+                <field name="payment_methods"></field>
+            </field>
+            <field name="payment_methods" position="after">
+                <field name="amount_words"></field>
+            </field>
+        </field>
+    </record>
+</odoo>

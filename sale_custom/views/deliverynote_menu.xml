@@ -1,0 +1,22 @@
+<?xml version="1.0" ?>
+<odoo>
+    <act_window id="action_sale_custom_delivery_note"
+            name="Delivery Note"
+            res_model="delivery.model"
+            view_mode="form"
+            target="current"
+            multi="True" />
+    <record id="view_delivery_notes" model="ir.ui.view">
+        <field name="name">Delivery Note</field>
+        <field name="model">delivery.model</field>
+        <field name="arch" type="xml">
+            <form>
+                <button type="object" name="print_report" string="Send email" class="oe_highlight"></button>
+            </form>
+
+        </field>
+
+    </record>
+
+    <menuitem id="menu_delivery_note" name="Delivery Note" action="action_sale_custom_delivery_note" />
+</odoo>
